@@ -70,14 +70,14 @@ pipeline {
                     node_modules/.bin/netlify --version
                     echo "Deploying to production. Site ID: $NETLIFY_SITE_ID"
                     node_modules/.bin/netlify status
-                    node_modules/.bin/netlify deploy --prod --dir=build --site=$NETLIFY_SITE_ID
+                    node_modules/.bin/netlify deploy --prod --dir=build --site=$NETLIFY_SITE_ID --no-build
                 '''
             }
         }
     }
     post {
         always {
-            junit 'test-results/junit.xml'
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
         }
     }
 }
