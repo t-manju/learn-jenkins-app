@@ -53,13 +53,6 @@ pipeline {
                     }
                 }
 
-                    post {
-                        always {
-                            junit 'jest-results/junit.xml'
-                        }
-                    }
-                }
-
                 stage('E2E') {
                     agent {
                         docker {
