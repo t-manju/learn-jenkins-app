@@ -54,10 +54,15 @@ pipeline {
                     sleep 5
 
                     echo "Running E2E tests..."
-                    npx playwright test
+                    npx playwright test --reporter=html
                 '''
             }
         }
+    post {
+        always {
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+        }
+    }
         stage('Deploy') {
             agent {
                 docker {
@@ -76,6 +81,23 @@ pipeline {
             }
         }
     }
+        stage('PROD Tests') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    reuseNode true
+                }
+            }
+            environment {
+                CI_ENVIRONMENT_URL = 'https://funny-genie-5491f4.netlify.app' // Replace with your actual Netlify site URL
+            }
+            steps {
+                sh '''
+                    echo "Running E2E tests..."
+                    npx playwright test --reporter=html
+                '''
+            }
+        }
     post {
         always {
             publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
