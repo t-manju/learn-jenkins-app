@@ -32,7 +32,7 @@ pipeline {
                     echo "Running tests"
                     ls -la
                     grep -r "index.html" build
-                    npm test
+                    npm test -- --watchAll=false
                 '''
             }
         }
@@ -45,9 +45,11 @@ pipeline {
             }
             steps {
                 sh '''
-                    npm install -g serve
-                    node_modules/.bin/serve -s build &
+                    echo "Starting application..."
+                    npx serve -s build -l 3000 &
                     sleep 5
+
+                    echo "Running E2E tests..."
                     npx playwright test
                 '''
             }
@@ -61,7 +63,7 @@ pipeline {
             }
             steps {
                 sh '''
-                    npm install netlify-cli -g
+                    npm install netlify-cli
                     node_modules/.bin/netlify --version
                 '''
             }
