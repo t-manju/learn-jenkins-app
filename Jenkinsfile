@@ -33,13 +33,26 @@ pipeline {
                             reuseNode true
                         }
                     }
-
                     steps {
                         sh '''
-                            #test -f build/index.html
-                            npm test
+                            echo "Running unit tests..."
+
+                            rm -f test-results/junit.xml
+                            mkdir -p test-results
+
+                            npm test -- --watchAll=false --testResultsProcessor=jest-junit
+
+                            echo "JUnit report:"
+                            cat test-results/junit.xml
                         '''
                     }
+                    post {
+                        always {
+                            junit testResults: 'test-results/junit.xml', allowEmptyResults: false
+                        }
+                    }
+                }
+
                     post {
                         always {
                             junit 'jest-results/junit.xml'
