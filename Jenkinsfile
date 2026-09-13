@@ -14,6 +14,7 @@ pipeline {
             }
             steps {
                 sh '''
+                    echo "Building the application..."
                     ls -la
                     node -v
                     npm -v
